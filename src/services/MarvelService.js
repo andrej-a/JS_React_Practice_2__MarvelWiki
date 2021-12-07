@@ -12,13 +12,32 @@ class MarvelService{
         return await result.json();
     }
 
-    getAllCharacters = () => {
-        return this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+    getAllCharacters = async () => {
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+        return res["data"]["results"].map(this._transformCharacter);
     }
 
-    getCharacter = (id) => {
-        return this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
+    getCharacter = async (id) => {
+        const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
+        return this._transformCharacter(res["data"]["results"][0]); //there is {}
     }
+                            //{}
+    _transformCharacter = (character) => {
+        return {
+            name: character.name,
+            thumbnail: (character.thumbnail.path + `.${character.thumbnail.extension}`),
+            description: (character.description === "" ? "Sorry, there is not description." : this.doShortDescription(character.description)),
+            homeLink: character.urls[0].url,
+            wikiLink: character.urls[1].url
+        }
+    }
+
+    doShortDescription = (str) => {
+        if (str.length > 150) {
+            str = `${str.slice(0, 151)}...`;
+        }
+        return str;
+    };
 }
 
 export default MarvelService;

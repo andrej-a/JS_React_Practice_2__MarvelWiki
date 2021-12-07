@@ -3,6 +3,7 @@ import MarvelService from '../../services/MarvelService';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
+import Spinner from '../spinner/Spinner';
 
 class RandomChar extends Component{
     constructor(props) {
@@ -11,36 +12,77 @@ class RandomChar extends Component{
     }
     //syntax field of classes
     state = {
-        name: null,
-        thumbnail: null,
-        description: null,
-        homeLink: "#",
-        wikiLink: "#"
+        char: {},
+        loading: true,
+        error: false
     }
 
     marvelService = new MarvelService()
 
+    onCharacterLoaded = (char) => {
+        return this.setState({
+            char: char,
+            loading: false
+        })
+    }
+
+    onError = () => {
+        return this.setState({
+            loading: false,
+            error: true
+        })
+    }
+
     updateCharacter = () => {
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.setState({
+            loading: true,
+            error: false
+        })
+
         this.marvelService
-            .getCharacter(1011250)
-            .then(res => {
-                console.log(res);
-                this.setState({
-                    name: res["data"]["results"][0].name,
-                    thumbnail: (res.data.results[0].thumbnail.path + `.${res.data.results[0].thumbnail.extension}`),
-                    description: (res.data.results[0].description === "" ? "Sorry, there is not description." : res.data.results[0].description),
-                    homeLink: res.data.results[0].urls[0].url,
-                    wikiLink: res.data.results[0].urls[1].url
-                })
-            })
+            .getCharacter(id)
+            .then(char => this.onCharacterLoaded(char))
+            .catch(this.onError)
     }
 
     render() {
-        const {name, thumbnail, description, homeLink, wikiLink} = this.state;
+        const {char, loading, error} = this.state;
         
         return(
             <div className="random">
-                <div className="random__info">
+
+                {loading ? <Spinner></Spinner> : error ? <ViewError></ViewError> : <ViewInfo char={char}></ViewInfo>}
+
+
+                <div className="random__action">
+                        <div className="random__action__title">
+                            <p>Random character for today!</p>
+                            <p>Do you want to get to know him better?</p>
+                        </div>
+                        <div className="random__action__choose">
+                            <p>Or choose another one</p>
+                        </div>
+                        <div className="random__action__image">
+                            <img src={mjolnir} alt="mjolnir" />
+                        </div>
+                        <div className="random__action__btns" onClick={(id) => {this.updateCharacter(id)}}>
+                            <a href="#" className="button button__main">
+                                <div className="inner">try it</div>
+                            </a>
+                        </div>    
+                </div>
+            </div>
+        )
+    }
+}
+
+const ViewInfo = ({char}) => {
+
+const {name, thumbnail, description, wikiLink, homeLink} = char;
+
+    return(
+        <div className="random__info">
                     <div className="random__image">
                         <img src={thumbnail} alt={thumbnail} />
                     </div>
@@ -64,30 +106,17 @@ class RandomChar extends Component{
                                 </a>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
-    
-                <div className="random__action">
-                        <div className="random__action__title">
-                            <p>Random character for today!</p>
-                            <p>Do you want to get to know him better?</p>
-                        </div>
-                        <div className="random__action__choose">
-                            <p>Or choose another one</p>
-                        </div>
-                        <div className="random__action__image">
-                            <img src={mjolnir} alt="mjolnir" />
-                        </div>
-                        <div className="random__action__btns" onClick={(id) => {this.updateCharacter(id)}}>
-                            <a href="#" className="button button__main">
-                                <div className="inner">try it</div>
-                            </a>
-                        </div>    
-                </div>
-            </div>
-        )
-    }
+    )
+}
+
+const ViewError = () => {
+    return(
+        <div className="random__error">
+            <p>"Sorry, this page is not found. Try it again!"</p>
+        </div>
+    )
 }
 
 export default RandomChar;

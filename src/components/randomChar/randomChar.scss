@@ -35,16 +35,14 @@
 
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
 
     }
 
     &__title{
         margin-bottom: 10px;
         position: relative;
-        left: -110px;
-        top: -40px;
+        padding-left: 0;
+        padding-top: 40px;
         &h2{
             font-family: Roboto Condensed;
             font-style: normal;
@@ -57,7 +55,10 @@
     }
 
     &__text{
+        margin-top: 10px;
         margin-bottom: 10px;
+        height: 80px;
+        width: 90%;
         p{
             font-family: Roboto Condensed;
             font-style: normal;
@@ -72,11 +73,21 @@
         display: flex;
         flex-direction: row;
         position: relative;
-        bottom: -35px;
 
         :first-child{
             margin-right: 15px;
         }
+    }
+
+    &__error{
+        width: 550px;
+        height: 250px;
+        font-size: 24px;
+        font-weight: 800;
+        color: $main-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     &__action{
