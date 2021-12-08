@@ -6,10 +6,7 @@ import mjolnir from '../../resources/img/mjolnir.png';
 import Spinner from '../spinner/Spinner';
 
 class RandomChar extends Component{
-    constructor(props) {
-        super(props)
-        this.updateCharacter()
-    }
+    
     //syntax field of classes
     state = {
         char: {},
@@ -18,6 +15,10 @@ class RandomChar extends Component{
     }
 
     marvelService = new MarvelService()
+
+    componentDidMount() {
+        this.updateCharacter();
+    }
 
     onCharacterLoaded = (char) => {
         return this.setState({
@@ -48,12 +49,15 @@ class RandomChar extends Component{
 
     render() {
         const {char, loading, error} = this.state;
-        
+        const errorMessage = error ? <ViewError></ViewError> : null;
+        const spinner = loading ? <Spinner></Spinner> : null;
+        const character = !(errorMessage || spinner) ? <ViewInfo char={char}></ViewInfo> : null;
+
         return(
             <div className="random">
-
-                {loading ? <Spinner></Spinner> : error ? <ViewError></ViewError> : <ViewInfo char={char}></ViewInfo>}
-
+                {errorMessage}
+                {spinner}
+                {character}
 
                 <div className="random__action">
                         <div className="random__action__title">
@@ -114,7 +118,7 @@ const {name, thumbnail, description, wikiLink, homeLink} = char;
 const ViewError = () => {
     return(
         <div className="random__error">
-            <p>"Sorry, this page is not found. Try it again!"</p>
+            <p>Sorry, this page is not found. Try it again!</p>
         </div>
     )
 }
