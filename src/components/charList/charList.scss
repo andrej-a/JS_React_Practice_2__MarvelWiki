@@ -27,11 +27,12 @@
             height: 200px;
             object-fit: cover;
             transform: translate(-15px, -15px);
-        }
-        &_selected {
+        }  
+    }
+
+    &__item:hover {
             box-shadow: 0 5px 20px $main-color;
             transform: translateY(-8px);
-        }
     }
     &__name {
         font-weight: bold;
@@ -39,5 +40,10 @@
         line-height: 29px;
         text-transform: uppercase;
         color: #fff;
+        transition: color .3s ease;
+    }
+
+    &__name:hover{
+        color: $main-color;
     }
 }

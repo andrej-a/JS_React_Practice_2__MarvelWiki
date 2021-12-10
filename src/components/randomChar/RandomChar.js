@@ -124,3 +124,4 @@ const ViewError = () => {
 }
 
 export default RandomChar;
+export {ViewError};

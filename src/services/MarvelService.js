@@ -1,7 +1,7 @@
 
 class MarvelService{
     _apiBase = "https://gateway.marvel.com:443/v1/public/";
-    _apiKey = "apikey=683ce3e04d05ad95bdd2b2a45512ae1a"
+    _apiKey = "apikey=2440c7a859b3bff0de7ce61825d29c6d"
      
     getResource = async (url) => {
         let result = await fetch(url);
@@ -14,7 +14,7 @@ class MarvelService{
     }
 
     getAllCharacters = async () => {
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=170&${this._apiKey}`);
         return res["data"]["results"].map(this._transformCharacter);
     }
 
@@ -25,17 +25,18 @@ class MarvelService{
                             //{}
     _transformCharacter = (character) => {
         return {
-            name: character.name,
+            id: character.id,
+            name: this.doShortDescription(character.name, 20),
             thumbnail: (character.thumbnail.path + `.${character.thumbnail.extension}`),
-            description: (character.description === "" ? "Sorry, there is not description." : this.doShortDescription(character.description)),
+            description: (character.description === "" ? "Sorry, there is not description." : this.doShortDescription(character.description, 150)),
             homeLink: character.urls[0].url,
             wikiLink: character.urls[1].url
         }
     }
 
-    doShortDescription = (str) => {
-        if (str.length > 150) {
-            str = `${str.slice(0, 151)}...`;
+    doShortDescription = (str, num) => {
+        if (str.length > num) {
+            str = `${str.slice(0, num)}...`;
         }
         return str;
     };
