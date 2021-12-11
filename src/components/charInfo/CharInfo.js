@@ -1,64 +1,135 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import MarvelService from '../../services/MarvelService';
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
+import Spinner from '../spinner/Spinner';
+import ViewError from '../error/Error';
 
 class CharInfo extends Component {
-    state = {
-        char: {},
-        loading: true,
-        error: false
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            char: {},
+            loading: false,
+            error: false,
+            startMessage: true
+        }
     }
+    //it happens when props were updating
+    componentDidUpdate(prevProps) {
+        // popular example (don`tforget compaire props):
+        if (this.props.charID !== prevProps.charID) {
+          this.updateChar();
+        }
+      }
 
     marvelService = new MarvelService();
 
     updateChar = () => {
+        this.setState({
+            loading: true,
+            startMessage: false,
+            error: false,
+        })
+
         const {charID} = this.props;
         if (!charID) {
             return;
         }
 
-        this.marvelService()
+        this.marvelService
         .getCharacter(charID)
-        .then()
-        .catch()
+        .then(char => {
+            this.onChangeState(char);
+        })
+        .catch(this.onError)
     }
 
-    
-    /*renderInfo = async (obj) => {
-        console.log(obj);
-        return await (
+    onChangeState = (char) => {
+        this.setState({
+            char: char,
+            loading: false
+        })
+    }
+
+    onError = () => {
+        this.setState({
+            loading: false,
+            error: true
+        })
+    }
+  
+      //card with main informstion of character
+    renderInfo = (char) => {
+        let imgStyle = {"objectFit": "cover"}
+        if (char["thumbnail"] === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+            imgStyle = {'objectFit' : 'unset'};
+        }
+
+        return (
             <div className="char__info">
                 <div className="char__basics">
-                    <img src={obj["thumbnail"]} alt="abyss"/>
+                    <img style={imgStyle} src={char["thumbnail"]} alt="abyss"/>
                     <div>
-                        <div className="char__info-name">thor</div>
+                        <div className="char__info-name">{char["name"]}</div>
                         <div className="char__btns">
-                            <a href="#" className="button button__main">
+                            <a href={char["homeLink"]} className="button button__main">
                                 <div className="inner">homepage</div>
                             </a>
-                            <a href="#" className="button button__secondary">
+                            <a href={char["wikiLink"]} className="button button__secondary">
                                 <div className="inner">Wiki</div>
                             </a>
                         </div>
                     </div>
                 </div>
                 <div className="char__descr">
-                    In Norse mythology, Loki is a god or jötunn (or both). Loki is the son of Fárbauti and Laufey, and the brother of Helblindi and Býleistr. By the jötunn Angrboða, Loki is the father of Hel, the wolf Fenrir, and the world serpent Jörmungandr. By Sigyn, Loki is the father of Nari and/or Narfi and with the stallion Svaðilfari as the father, Loki gave birth—in the form of a mare—to the eight-legged horse Sleipnir. In addition, Loki is referred to as the father of Váli in the Prose Edda.
+                    {char["description"]}
                 </div>
                 <div className="char__comics">Comics:</div>
-                <ul className="char__comics-list">
-                    <li className="char__comics-item">
-                        All-Winners Squad: Band of Heroes (2011) #3
-                    </li>
-                </ul>
+                    {this.renderComics(char)}
             </div>
         )
-    }*/
+    }
+    //render comicses for info higher
+    renderComics = (obj) => {
+
+        if (obj["comics"]["items"].length === 0) {
+            return(
+                <ul className="char__comics-list">
+                   <p>Sorry, there aren`t any comicses.</p>
+                </ul>
+            )
+        }
+
+        const comics = obj["comics"]["items"].map((item, index) => {
+
+            return (
+                <li key={index} className="char__comics-item">
+                        <a href={item["resourceURI"]}>{item["name"]}</a>
+                    </li>
+            )
+        })
+
+        return(
+            <ul className="char__comics-list">
+                   {comics}
+                </ul>
+        )
+    }
 
     render() {
+        const {char, loading, error, startMessage } = this.state;
+        const errorMessage = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
+        const firstMessage = startMessage ? <ViewError errorMessage={"Please, choose a card to have more information."}></ViewError> : null;
+        const spinner = loading ? <Spinner></Spinner> : null;
+        const content = !(loading || error || firstMessage) ? this.renderInfo(char) : null;
         return (
-            <div></div>
+            <Fragment>
+                {spinner}
+                {errorMessage}
+                {content}
+                {firstMessage}
+            </Fragment>
         )
     }
 }

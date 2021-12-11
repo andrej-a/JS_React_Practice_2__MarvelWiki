@@ -1,5 +1,5 @@
-import { Component, Fragment } from 'react';
-import { ViewError } from '../randomChar/RandomChar';
+import { Component } from 'react';
+import ViewError from '../error/Error';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import './charList.scss';
@@ -19,7 +19,7 @@ class CharList extends Component {
    
     componentDidMount() {
         this.marvelService.getAllCharacters()
-        .then(res => this.onChangeState(res))
+        .then(list => this.onChangeState(list))
         .catch(this.onCatchError)
     }
 
@@ -38,7 +38,7 @@ class CharList extends Component {
     }
     
     renderItems = (arr) => {
-        const items = arr.map((item, index) => {
+        const items = arr.map(item => {
             let imgStyle = {"objectFit": "cover"}
             
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -70,7 +70,7 @@ class CharList extends Component {
     render() {
         const {loading, error, charList} = this.state;
         const spinner = loading ? <Spinner></Spinner> : null;
-        const err = error ? <ViewError></ViewError> : null;
+        const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
         const content = !(loading || error) ? this.renderItems(charList) : null;
         return (
             <div className="char__list">
@@ -84,9 +84,5 @@ class CharList extends Component {
         )
     }
 }
-
-
-        
-   
 
 export default CharList;

@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
+import ViewError from '../error/Error';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -49,7 +50,8 @@ class RandomChar extends Component{
 
     render() {
         const {char, loading, error} = this.state;
-        const errorMessage = error ? <ViewError></ViewError> : null;
+
+        const errorMessage = error ? <ViewError errorMessage={"Sorry, this page is not found. Try it again!"}></ViewError> : null;
         const spinner = loading ? <Spinner></Spinner> : null;
         const character = !(errorMessage || spinner) ? <ViewInfo char={char}></ViewInfo> : null;
 
@@ -115,13 +117,4 @@ const {name, thumbnail, description, wikiLink, homeLink} = char;
     )
 }
 
-const ViewError = () => {
-    return(
-        <div className="random__error">
-            <p>Sorry, this page is not found. Try it again!</p>
-        </div>
-    )
-}
-
 export default RandomChar;
-export {ViewError};
