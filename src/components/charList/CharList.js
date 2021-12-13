@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import ViewError from '../error/Error';
+import ViewError from '../Error/Error';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import './charList.scss';

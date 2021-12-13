@@ -4,6 +4,7 @@ import AppHeader from "../appHeader/AppHeader";
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
+import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 import decoration from '../../resources/img/vision.png';
 
@@ -24,10 +25,17 @@ class App extends Component{
             <div className="app">
                 <AppHeader/>
                 <main>
-                    <RandomChar/>
+                    <ErrorBoundary errorMessage={"Some problems. We are working for solve it."}>
+                        <RandomChar/>
+                    </ErrorBoundary>
                     <div className="char__content">
-                        <CharList onCharSelected={this.onCharSelected}/>
-                        <CharInfo charID={this.state.selectedChar}/>
+                        <ErrorBoundary errorMessage={"Some problems. We are working for solve it."}>
+                            <CharList onCharSelected={this.onCharSelected}/>
+                        </ErrorBoundary>
+                        
+                        <ErrorBoundary errorMessage={"Something wrong. Please, try later."}>
+                            <CharInfo charID={this.state.selectedChar}/>
+                        </ErrorBoundary>
                     </div>
                     <img className="bg-decoration" src={decoration} alt="vision"/>
                 </main>

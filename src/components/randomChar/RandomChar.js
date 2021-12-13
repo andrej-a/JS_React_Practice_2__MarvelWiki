@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
-import ViewError from '../error/Error';
+import ViewError from '../Error/Error';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -46,6 +46,7 @@ class RandomChar extends Component{
             .getCharacter(id)
             .then(char => this.onCharacterLoaded(char))
             .catch(this.onError)
+
     }
 
     render() {

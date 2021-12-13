@@ -32,7 +32,7 @@ class MarvelService{
             description: (character.description === "" ? "Sorry, there is not description." : this.doShortDescription(character.description, 150)),
             homeLink: character.urls[0].url,
             wikiLink: character.urls[1].url,
-            comics: character.comics
+            comics: this.doSpliceOfComics(character.comics.items, 10)
         }
     }
 
@@ -42,6 +42,13 @@ class MarvelService{
         }
         return str;
     };
+
+    doSpliceOfComics = (arr, num) => {
+        if (arr.length > num) {
+            arr = arr.splice(0, num) 
+        }
+        return arr;
+    }
 }
 
 export default MarvelService;
