@@ -12,29 +12,38 @@ class CharList extends Component {
             charList: [],
             loading: true,
             error: false,
+            newItemsLoading: false,
+            offset: this.marvelService._baseOffset,
         }
     }
     
     marvelService = new MarvelService();
    
     componentDidMount() {
-        this.marvelService.getAllCharacters()
-        .then(list => this.onChangeState(list))
-        .catch(this.onCatchError)
+        this.getMoreCharacters()
     }
-
-    onChangeState = (list) => {
-        this.setState({
-            charList: list,
-            loading: false
-        })
-    } 
 
     onCatchError = () => {
         this.setState({
             loading: false,
-            error: true
+            error: true,
+            newItemsLoading: false,
         })
+    }
+
+    onNewItemsLoading = () => {
+        this.setState({
+            loading: false,
+            newItemsLoading: true
+        })
+    }
+
+    onNewItemsCharacters = (newArray) => {
+        this.setState(({offset, charList}) => ({
+            charList: [...charList, ...newArray],
+            newItemsLoading: false,
+            offset: offset + 9,
+        }))
     }
     
     renderItems = (arr) => {
@@ -67,22 +76,42 @@ class CharList extends Component {
         )
     }
 
+    getMoreCharacters = (offset) => {
+        this.onNewItemsLoading();
+        
+        this.marvelService.getAllCharacters(offset)
+        .then(list => this.onNewItemsCharacters(list))
+        .catch(this.onCatchError)
+    }
+
     render() {
-        const {loading, error, charList} = this.state;
+        const {loading, error, charList, newItemsLoading, offset} = this.state;
         const spinner = loading ? <Spinner></Spinner> : null;
         const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
-        const content = !(loading || error) ? this.renderItems(charList) : null;
+        const content = !(error) ? this.renderItems(charList) : null;
+
+        const minLoad = (!(loading) && newItemsLoading) ? <Spinner></Spinner> : null;
+        const loadButton = !(error || loading || newItemsLoading) ? <LoadCharButton getMoreCharacters={() => this.getMoreCharacters(offset)}></LoadCharButton> : null;
         return (
             <div className="char__list">
                 {spinner}
                 {err}
                 {content}
-                <button className="button button__main button__long">
-                    <div className="inner">load more</div>
-                </button>
+                {minLoad}
+                {loadButton}
             </div>
         )
     }
+}
+
+const LoadCharButton = (props) => {
+    return(
+        <button
+        onClick={() => props.getMoreCharacters()}
+        className="button button__main button__long">
+            <div className="inner">load more</div>
+        </button>
+    )
 }
 
 export default CharList;

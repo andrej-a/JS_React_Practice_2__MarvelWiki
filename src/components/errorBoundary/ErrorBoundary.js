@@ -17,9 +17,9 @@ class ErrorBoundary extends Component {
     }
 
     //like componentDidCatch but just update state for error
-    static getDerivedStateFromCatch(error) {
+    /*static getDerivedStateFromCatch(error) {
         return {error: true}
-    }
+    }*/
 
     render() {
         if (this.state.error) {
