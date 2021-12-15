@@ -1,6 +1,6 @@
 import { Component, Fragment } from 'react';
 import MarvelService from '../../services/MarvelService';
-
+import PropTypes from "prop-types";
 import './charInfo.scss';
 import Spinner from '../spinner/Spinner';
 import ViewError from '../Error/Error';
@@ -141,6 +141,10 @@ const Comics = (props) => {
             </ul>
     )
     
+}
+
+CharInfo.propTypes = {
+    charID: PropTypes.number
 }
 
 export default CharInfo;

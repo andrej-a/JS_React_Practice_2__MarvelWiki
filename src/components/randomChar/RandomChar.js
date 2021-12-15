@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from "prop-types";
 import MarvelService from '../../services/MarvelService';
 import ViewError from '../Error/Error';
 
@@ -116,6 +117,10 @@ const {name, thumbnail, description, wikiLink, homeLink} = char;
                     </div>
                 </div>
     )
+}
+
+ViewInfo.propTypes = {
+    char: PropTypes.object
 }
 
 export default RandomChar;

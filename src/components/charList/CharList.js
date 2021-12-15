@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from "prop-types";
 import ViewError from '../Error/Error';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -13,7 +14,8 @@ class CharList extends Component {
             loading: true,
             error: false,
             newItemsLoading: false,
-            offset: this.marvelService._baseOffset,
+            offset: 1660,
+            lastCharacters: false,
         }
     }
     
@@ -21,6 +23,19 @@ class CharList extends Component {
    
     componentDidMount() {
         this.getMoreCharacters()
+    }
+
+    getMoreCharacters = (offset) => {
+        this.onNewItemsLoading();
+        
+        this.marvelService.getAllCharacters(offset)
+        .then(list => {
+            if (list.length === 0) {
+                this.setState({lastCharacters: true})
+            }  
+            this.onNewItemsCharacters(list)
+        })
+        .catch(this.onCatchError)
     }
 
     onCatchError = () => {
@@ -76,22 +91,15 @@ class CharList extends Component {
         )
     }
 
-    getMoreCharacters = (offset) => {
-        this.onNewItemsLoading();
-        
-        this.marvelService.getAllCharacters(offset)
-        .then(list => this.onNewItemsCharacters(list))
-        .catch(this.onCatchError)
-    }
-
     render() {
-        const {loading, error, charList, newItemsLoading, offset} = this.state;
+        const {loading, error, charList, newItemsLoading, offset, lastCharacters} = this.state;
         const spinner = loading ? <Spinner></Spinner> : null;
         const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
         const content = !(error) ? this.renderItems(charList) : null;
 
         const minLoad = (!(loading) && newItemsLoading) ? <Spinner></Spinner> : null;
-        const loadButton = !(error || loading || newItemsLoading) ? <LoadCharButton getMoreCharacters={() => this.getMoreCharacters(offset)}></LoadCharButton> : null;
+        const loadButton = !(error || loading || newItemsLoading || lastCharacters) ? <LoadCharButton getMoreCharacters={() => this.getMoreCharacters(offset)}></LoadCharButton> : null;
+        const lastCard = lastCharacters ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
         return (
             <div className="char__list">
                 {spinner}
@@ -99,6 +107,7 @@ class CharList extends Component {
                 {content}
                 {minLoad}
                 {loadButton}
+                {lastCard}
             </div>
         )
     }
@@ -112,6 +121,14 @@ const LoadCharButton = (props) => {
             <div className="inner">load more</div>
         </button>
     )
+}
+
+CharList.propTypes = {
+    onCharSelected: PropTypes.func
+}
+
+LoadCharButton.propTypes = {
+    getMoreCharacters: PropTypes.func
 }
 
 export default CharList;
