@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import ViewError from '../Error/Error';
+import ViewError from '../error/Error';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import './charList.scss';
@@ -67,10 +67,15 @@ class CharList extends Component {
         this.itemRefs.push(ref);
     }
 
-    focusOnItem = (id, e) => {
-        this.itemRefs.forEach(item => item.classList.remove('char__item__selected'));
-        this.itemRefs[id].classList.add('char__item__selected');
-        this.itemRefs[id].focus();
+    focusOnItem = id => {
+        if (this.itemRefs[id].classList.contains('char__item__selected')) {
+            this.itemRefs[id].classList.remove('char__item__selected')
+            this.itemRefs[id].classList.add('char__item');
+        } else {
+            this.itemRefs.forEach(item => item.classList.remove('char__item__selected'));
+            this.itemRefs[id].classList.add('char__item__selected');
+            this.itemRefs[id].focus();
+        }
     }
     
     renderItems = (arr) => {

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import PropTypes from "prop-types";
 import MarvelService from '../../services/MarvelService';
-import ViewError from '../Error/Error';
+import ViewError from '../error/Error';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';

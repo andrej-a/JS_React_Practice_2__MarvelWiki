@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import ViewError from '../Error/Error';
+import ViewError from '../error/Error';
 
 class ErrorBoundary extends Component {
     constructor(props){

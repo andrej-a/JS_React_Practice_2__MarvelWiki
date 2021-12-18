@@ -3,7 +3,7 @@ import MarvelService from '../../services/MarvelService';
 import PropTypes from "prop-types";
 import './charInfo.scss';
 import Spinner from '../spinner/Spinner';
-import ViewError from '../Error/Error';
+import ViewError from '../error/Error';
 import Skeleton from '../skeleton/Skeleton';
 
 class CharInfo extends Component {
@@ -22,7 +22,7 @@ class CharInfo extends Component {
         // popular example (don`tforget compaire props):
         if (this.props.charID !== prevProps.charID) {
           this.updateChar();
-        }
+        } 
       }
 
     marvelService = new MarvelService();
