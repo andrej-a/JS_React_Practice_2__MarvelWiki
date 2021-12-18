@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import ViewError from '../Error/Error';
 import MarvelService from '../../services/MarvelService';
@@ -14,9 +14,11 @@ class CharList extends Component {
             loading: true,
             error: false,
             newItemsLoading: false,
-            offset: 1660,
+            offset: this.marvelService._baseOffset,
             lastCharacters: false,
         }
+
+        this.itemRefs = [];
     }
     
     marvelService = new MarvelService();
@@ -60,9 +62,19 @@ class CharList extends Component {
             offset: offset + 9,
         }))
     }
+
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+
+    focusOnItem = (id, e) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item__selected'));
+        this.itemRefs[id].classList.add('char__item__selected');
+        this.itemRefs[id].focus();
+    }
     
     renderItems = (arr) => {
-        const items = arr.map(item => {
+        const items = arr.map((item, i) => {
             let imgStyle = {"objectFit": "cover"}
             
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -71,11 +83,20 @@ class CharList extends Component {
 
             return (
                 <li 
+                    ref={this.setRef}
                     className="char__item"
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            this.props.onCharSelected(item["id"])
+                            this.focusOnItem(i);
+                        }
+                    }}
                     onClick={() => {
                         this.props.onCharSelected(item["id"])
+                        this.focusOnItem(i);
                     }}
-                    key={item["id"]}>
+                    key={item["id"]}
+                    >
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                         <a target="blank" href={item["homeLink"]}>
                             <div className="char__name">{item.name}</div>
