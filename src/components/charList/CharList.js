@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from "prop-types";
 import ViewError from '../error/Error';
 import MarvelService from '../../services/MarvelService';
@@ -6,137 +6,123 @@ import Spinner from '../spinner/Spinner';
 import './charList.scss';
 
 
-class CharList extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            charList: [],
-            loading: true,
-            error: false,
-            newItemsLoading: false,
-            offset: this.marvelService._baseOffset,
-            lastCharacters: false,
-        }
+const CharList = (props) => {
+const marvelService = new MarvelService();
 
-        this.itemRefs = [];
-    }
-    
-    marvelService = new MarvelService();
-   
-    componentDidMount() {
-        this.getMoreCharacters()
-    }
+let [charList, setCharList] = useState([]);
+let [loading, toggleLoading] = useState(true);
+let [error, toggleError] = useState(false);
+let [newItemsLoading, togglenewItemsLoading] = useState(false);
+let [offset, toggleOffset] = useState(marvelService._baseOffset);
+let [lastCharacters, toggleLastCharacters] = useState(false);
 
-    getMoreCharacters = (offset) => {
-        this.onNewItemsLoading();
-        
-        this.marvelService.getAllCharacters(offset)
-        .then(list => {
-            if (list.length === 0) {
-                this.setState({lastCharacters: true})
-            }  
-            this.onNewItemsCharacters(list)
-        })
-        .catch(this.onCatchError)
+let itemRefs = useRef([]);
+
+//firsttime loading
+useEffect(() => {
+    getMoreCharacters(offset);
+}, []);        
+
+//getting characters
+function getMoreCharacters(offset){
+    if (charList.length > 0) {
+        togglenewItemsLoading(true);
     }
 
-    onCatchError = () => {
-        this.setState({
-            loading: false,
-            error: true,
-            newItemsLoading: false,
-        })
-    }
+    marvelService.getAllCharacters(offset)
+    .then(list => {
 
-    onNewItemsLoading = () => {
-        this.setState({
-            loading: false,
-            newItemsLoading: true
-        })
-    }
-
-    onNewItemsCharacters = (newArray) => {
-        this.setState(({offset, charList}) => ({
-            charList: [...charList, ...newArray],
-            newItemsLoading: false,
-            offset: offset + 9,
-        }))
-    }
-
-    setRef = (ref) => {
-        this.itemRefs.push(ref);
-    }
-
-    focusOnItem = id => {
-        if (this.itemRefs[id].classList.contains('char__item__selected')) {
-            this.itemRefs[id].classList.remove('char__item__selected')
-            this.itemRefs[id].classList.add('char__item');
+        if (list.length === 0) {
+            toggleLastCharacters(true);
+            togglenewItemsLoading(false);
         } else {
-            this.itemRefs.forEach(item => item.classList.remove('char__item__selected'));
-            this.itemRefs[id].classList.add('char__item__selected');
-            this.itemRefs[id].focus();
-        }
-    }
-    
-    renderItems = (arr) => {
-        const items = arr.map((item, i) => {
-            let imgStyle = {"objectFit": "cover"}
-            
-            if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-                imgStyle = {'objectFit' : 'unset'};
-            }
+            onNewItemsCharacters(list);
+        }  
+    })
+    .catch(onCatchError);
+}
 
-            return (
-                <li 
-                    ref={this.setRef}
-                    className="char__item"
-                    onKeyPress={(e) => {
-                        if (e.key === ' ' || e.key === "Enter") {
-                            this.props.onCharSelected(item["id"])
-                            this.focusOnItem(i);
-                        }
-                    }}
-                    onClick={() => {
-                        this.props.onCharSelected(item["id"])
-                        this.focusOnItem(i);
-                    }}
-                    key={item["id"]}
-                    >
-                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                        <a target="blank" href={item["homeLink"]}>
-                            <div className="char__name">{item.name}</div>
-                        </a>
-                </li>
-            )
-        })
+function onCatchError() {
+    toggleLoading(false);
+    togglenewItemsLoading(false);
+
+    toggleError(true);
+}
+
+function onNewItemsCharacters(newArray) {
+    setCharList(charList => [...charList, ...newArray]);
+    toggleLoading(false);
+    togglenewItemsLoading(false);
+    toggleOffset(offset => offset + 9);
+}
+
+function focusOnItem(id) {
+    if (itemRefs.current[id].classList.contains('char__item__selected')) {
+        itemRefs.current[id].classList.remove('char__item__selected')
+        itemRefs.current[id].classList.add('char__item');
+    } else {
+        itemRefs.current.forEach(item => item.classList.remove('char__item__selected'));
+        itemRefs.current[id].classList.add('char__item__selected');
+        itemRefs.current[id].focus();
+    }
+}
+
+function renderItems(arr) {
+    const items = arr.map((item, i) => {
+        let imgStyle = {"objectFit": "cover"}
         
-        return (
-            <ul className="char__grid">
-                {items}
-            </ul>
-        )
-    }
+        if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+            imgStyle = {'objectFit' : 'unset'};
+        }
 
-    render() {
-        const {loading, error, charList, newItemsLoading, offset, lastCharacters} = this.state;
-        const spinner = loading ? <Spinner></Spinner> : null;
-        const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
-        const content = !(error) ? this.renderItems(charList) : null;
-
-        const minLoad = (!(loading) && newItemsLoading) ? <Spinner></Spinner> : null;
-        const loadButton = !(error || loading || newItemsLoading || lastCharacters) ? <LoadCharButton getMoreCharacters={() => this.getMoreCharacters(offset)}></LoadCharButton> : null;
-        const lastCard = lastCharacters ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
         return (
-            <div className="char__list">
-                {spinner}
-                {err}
-                {content}
-                {minLoad}
-                {loadButton}
-                {lastCard}
-            </div>
+            <li 
+                ref={el => itemRefs.current[i] = el}
+                className="char__item"
+                onKeyPress={(e) => {
+                    if (e.key === ' ' || e.key === "Enter") {
+                        props.onCharSelected(item["id"])
+                        focusOnItem(i);
+                    }
+                }}
+                onClick={() => {
+                    props.onCharSelected(item["id"])
+                    focusOnItem(i);
+                }}
+                key={item["id"]}
+                >
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                    <a target="blank" href={item["homeLink"]}>
+                        <div className="char__name">{item.name}</div>
+                    </a>
+            </li>
         )
-    }
+    })
+    
+    return (
+        <ul className="char__grid">
+            {items}
+        </ul>
+    )
+}
+    const content = !(error) ? renderItems(charList) : null;
+    const spinner = loading ? <Spinner></Spinner> : null;
+    const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
+    
+    const minLoad = (!(loading) && newItemsLoading) ? <Spinner></Spinner> : null;
+    const lastCard = lastCharacters ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
+    const loadButton = !(error || loading || newItemsLoading || lastCharacters) ? <LoadCharButton getMoreCharacters={() => getMoreCharacters(offset)}></LoadCharButton> : null;
+
+    return (
+        <div className="char__list">
+            {spinner}
+            {err}
+            {content}
+            {minLoad}
+            {loadButton}
+            {lastCard}
+        </div>
+    )
 }
 
 const LoadCharButton = (props) => {

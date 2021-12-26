@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import MarvelService from '../../services/MarvelService';
 import PropTypes from "prop-types";
 import './charInfo.scss';
@@ -6,65 +6,51 @@ import Spinner from '../spinner/Spinner';
 import ViewError from '../error/Error';
 import Skeleton from '../skeleton/Skeleton';
 
-class CharInfo extends Component {
-    constructor(props) {
-        super(props)
+const CharInfo = (props) => {
 
-        this.state = {
-            char: {},
-            loading: false,
-            error: false,
-            skeleton: true
+    const [char, setChar] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    const [skeleton, setSkeleton] = useState(true);
+    
+    useEffect(() => {
+        if (props.charID) {
+            updateChar();
         }
-    }
-    //it happens when props were updating
-    componentDidUpdate(prevProps) {
-        // popular example (don`tforget compaire props):
-        if (this.props.charID !== prevProps.charID) {
-          this.updateChar();
-        } 
-      }
+    }, [props.charID]);
+    
+    const marvelService = new MarvelService();
 
-    marvelService = new MarvelService();
+    function updateChar() {
+        setLoading(true);
+        setSkeleton(false);
+        setError(false);
+        
+        const {charID} = props;
 
-    updateChar = () => {
-
-        this.setState({
-            loading: true,
-            skeleton: false,
-            error: false,
-        })
-
-        const {charID} = this.props;
         if (!charID) {
             return;
         }
 
-        this.marvelService
+        marvelService
             .getCharacter(charID)
             .then(char => {
-                this.onChangeState(char);
+                onChangeState(char);
             })
-            .catch(this.onError)
+            .catch(onError)
 
     }
 
-    onChangeState = (char) => {
-        this.setState({
-            char: char,
-            loading: false
-        })
+    function onChangeState(char) {
+        setChar(char);
+        setLoading(false);
     }
 
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
+    function onError () {
+        setLoading(false);
+        setError(true);
     }
   
-    render() {
-        const {char, loading, error, skeleton } = this.state;
         const errorMessage = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
         const firstMessage = skeleton ? <Skeleton></Skeleton> : null;
         const spinner = loading ? <Spinner></Spinner> : null;
@@ -79,7 +65,6 @@ class CharInfo extends Component {
                 {content}
             </Fragment>
         )
-    }
 }
 
 //card with main informstion of character 
@@ -98,7 +83,7 @@ const Information = (props) => {
                     <div className="char__info-name">{char["name"]}</div>
                     <div className="char__btns">
                         <a href={char["homeLink"]} className="button button__main">
-                            <div className="inner">homepage</div>
+                            <div className="inner">Homepage</div>
                         </a>
                         <a href={char["wikiLink"]} className="button button__secondary">
                             <div className="inner">Wiki</div>

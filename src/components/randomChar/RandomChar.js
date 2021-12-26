@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 import MarvelService from '../../services/MarvelService';
 import ViewError from '../error/Error';
@@ -7,51 +7,39 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import Spinner from '../spinner/Spinner';
 
-class RandomChar extends Component{
+const RandomChar = () => {
     
-    //syntax field of classes
-    state = {
-        char: {},
-        loading: true,
-        error: false
+    const [char, setChar] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+   
+    const marvelService = new MarvelService();
+
+    useEffect(() => {
+        updateCharacter();
+    }, []);
+
+    function onCharacterLoaded(char) {
+        setChar(char);
+        setLoading(false);
     }
 
-    marvelService = new MarvelService()
-
-    componentDidMount() {
-        this.updateCharacter();
+    function onError() {
+        setLoading(false);
+        setError(true);
     }
 
-    onCharacterLoaded = (char) => {
-        return this.setState({
-            char: char,
-            loading: false
-        })
-    }
-
-    onError = () => {
-        return this.setState({
-            loading: false,
-            error: true
-        })
-    }
-
-    updateCharacter = () => {
+    function updateCharacter() {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        this.setState({
-            loading: true,
-            error: false
-        })
-
-        this.marvelService
+        setLoading(true);
+        setError(false);
+        
+        marvelService
             .getCharacter(id)
-            .then(char => this.onCharacterLoaded(char))
-            .catch(this.onError)
+            .then(char => onCharacterLoaded(char))
+            .catch(onError)
 
     }
-
-    render() {
-        const {char, loading, error} = this.state;
 
         const errorMessage = error ? <ViewError errorMessage={"Sorry, this page is not found. Try it again!"}></ViewError> : null;
         const spinner = loading ? <Spinner></Spinner> : null;
@@ -74,7 +62,7 @@ class RandomChar extends Component{
                         <div className="random__action__image">
                             <img src={mjolnir} alt="mjolnir" />
                         </div>
-                        <div className="random__action__btns" onClick={(id) => {this.updateCharacter(id)}}>
+                        <div className="random__action__btns" onClick={(id) => {updateCharacter(id)}}>
                             <a href="#" className="button button__main">
                                 <div className="inner">try it</div>
                             </a>
@@ -82,7 +70,6 @@ class RandomChar extends Component{
                 </div>
             </div>
         )
-    }
 }
 
 const ViewInfo = ({char}) => {
