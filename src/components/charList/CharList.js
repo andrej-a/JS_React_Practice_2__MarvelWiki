@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from "prop-types";
 import ViewError from '../error/Error';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import './charList.scss';
 
 
 const CharList = (props) => {
-const marvelService = new MarvelService();
+const {loading, newItemsLoading, togglenewItemsLoading, error, _baseOffset, getAllCharacters} = useMarvelService();
 
-let [charList, setCharList] = useState([]);
-let [loading, toggleLoading] = useState(true);
-let [error, toggleError] = useState(false);
-let [newItemsLoading, togglenewItemsLoading] = useState(false);
-let [offset, toggleOffset] = useState(marvelService._baseOffset);
-let [lastCharacters, toggleLastCharacters] = useState(false);
+const [charList, setCharList] = useState([]);
+const [offset, toggleOffset] = useState(_baseOffset);
+const [lastCharacters, toggleLastCharacters] = useState(false);
 
 let itemRefs = useRef([]);
 
@@ -29,12 +26,10 @@ function getMoreCharacters(offset){
         togglenewItemsLoading(true);
     }
 
-    marvelService.getAllCharacters(offset)
+    getAllCharacters(offset)
     .then(list => {
-
         if (list.length === 0) {
             toggleLastCharacters(true);
-            togglenewItemsLoading(false);
         } else {
             onNewItemsCharacters(list);
         }  
@@ -43,16 +38,11 @@ function getMoreCharacters(offset){
 }
 
 function onCatchError() {
-    toggleLoading(false);
     togglenewItemsLoading(false);
-
-    toggleError(true);
 }
 
 function onNewItemsCharacters(newArray) {
     setCharList(charList => [...charList, ...newArray]);
-    toggleLoading(false);
-    togglenewItemsLoading(false);
     toggleOffset(offset => offset + 9);
 }
 
@@ -69,7 +59,7 @@ function focusOnItem(id) {
 
 function renderItems(arr) {
     const items = arr.map((item, i) => {
-        let imgStyle = {"objectFit": "cover"}
+        let imgStyle = {"objectFit": "cover"};
         
         if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
             imgStyle = {'objectFit' : 'unset'};
@@ -106,10 +96,10 @@ function renderItems(arr) {
     )
 }
     const content = !(error) ? renderItems(charList) : null;
-    const spinner = loading ? <Spinner></Spinner> : null;
+    const spinner = (!(newItemsLoading) && loading) ? <Spinner></Spinner> : null;
     const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
     
-    const minLoad = (!(loading) && newItemsLoading) ? <Spinner></Spinner> : null;
+    const minLoad = newItemsLoading ? <Spinner></Spinner> : null;
     const lastCard = lastCharacters ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
     const loadButton = !(error || loading || newItemsLoading || lastCharacters) ? <LoadCharButton getMoreCharacters={() => getMoreCharacters(offset)}></LoadCharButton> : null;
 

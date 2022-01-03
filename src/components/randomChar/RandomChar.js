@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ViewError from '../error/Error';
 
 import './randomChar.scss';
@@ -10,10 +10,8 @@ import Spinner from '../spinner/Spinner';
 const RandomChar = () => {
     
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
    
-    const marvelService = new MarvelService();
+    const {loading, error,clearError, getCharacter} = useMarvelService();
 
     useEffect(() => {
         updateCharacter();
@@ -21,24 +19,15 @@ const RandomChar = () => {
 
     function onCharacterLoaded(char) {
         setChar(char);
-        setLoading(false);
-    }
-
-    function onError() {
-        setLoading(false);
-        setError(true);
     }
 
     function updateCharacter() {
-        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        setLoading(true);
-        setError(false);
+        clearError();
         
-        marvelService
-            .getCharacter(id)
-            .then(char => onCharacterLoaded(char))
-            .catch(onError)
-
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        
+        getCharacter(id)
+            .then(char => onCharacterLoaded(char));
     }
 
         const errorMessage = error ? <ViewError errorMessage={"Sorry, this page is not found. Try it again!"}></ViewError> : null;

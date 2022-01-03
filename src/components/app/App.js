@@ -30,7 +30,7 @@ const App = () => {
                         />
                     </ErrorBoundary>
                     
-                    <ErrorBoundary errorMessage={"Something wrong. Please, try later."}>
+                    <ErrorBoundary errorMessage={"This component is wrong. We are solving it."}>
                         <CharInfo 
                         charID={selectedChar}
                         />
