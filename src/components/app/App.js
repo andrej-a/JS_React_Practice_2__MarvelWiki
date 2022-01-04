@@ -6,6 +6,9 @@ import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
+import ComicsHeader from "../comicsHeader/comicsHeader";
+import AppBanner from "../appBanner/AppBanner";
+import ComicsList from "../comicsList/comicsList";
 import decoration from '../../resources/img/vision.png';
 
 const App = () => {
@@ -37,6 +40,14 @@ const App = () => {
                     </ErrorBoundary>
                 </div>
                 <img className="bg-decoration" src={decoration} alt="vision"/>
+            </main>
+            <ComicsHeader/>
+            <main>
+                <AppBanner/>
+
+                <ErrorBoundary errorMessage={"Some problems. We are working for solve it."}>
+                    <ComicsList/>
+                </ErrorBoundary>
             </main>
         </div>
     )

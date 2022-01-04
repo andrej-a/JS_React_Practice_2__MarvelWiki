@@ -1,0 +1,79 @@
+@import '../../style/variables.scss';
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+
+.comics{
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 650px 425px;
+    column-gap: 25px;
+    align-items: start;
+
+    &__list{
+        display: grid;
+        grid-template-columns: repeat(4, 265px);
+        column-gap: 25px;
+        row-gap: 30px;
+    }
+
+    &__item{
+        width: 225px;
+        height: 397px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, .25);
+        padding: 15px;
+        cursor: pointer;
+        transition: 0.3s transform;
+
+        img {
+            display: block;
+            width: inherit;
+            height: 346px;
+            background-color: $main-color;
+            object-fit: cover;
+            transform: translate(-15px, -15px);
+        }
+
+        &__title{
+            width: 225px;
+            height: 36px;
+
+            position: relative;
+            padding-top: 10px;
+            top: -15px;
+            left: -15px;
+            font-family: Condensed;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 16px;
+            color: #000;
+            transition: color .3s ease;
+        }
+
+        &__title:hover{
+            color: $main-color;
+        }
+
+        &__price{
+            height: 18px;
+
+            font-family: Condensed;
+            position: relative;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 16px;
+            padding-top: 5px;
+            top: -15px;
+            left: -15px;
+
+            color: rgba(0, 0, 0, 0.6);
+        }
+    }//item
+
+    &__item:hover {
+        box-shadow: 0 5px 20px $main-color;
+        transform: translateY(-8px);
+}
+}
