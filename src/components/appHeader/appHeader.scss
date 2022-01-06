@@ -23,6 +23,12 @@
     &__menu{
         display: inline-block;
         cursor: pointer;
+        color: $dark;
+        transition: color .5s ease;
+
+        :hover{
+            color: $main-color;
+        }
 
         ul{
             :first-child{

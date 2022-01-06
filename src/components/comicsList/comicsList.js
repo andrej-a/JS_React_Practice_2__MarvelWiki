@@ -46,7 +46,7 @@ const ComicsList = () => {
         const items = arr.map((item, i) => {
             let imgStyle = {"objectFit": "cover"};
             
-            if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+            if (item.thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
                 imgStyle = {'objectFit' : 'unset'};
             }
     
@@ -55,10 +55,12 @@ const ComicsList = () => {
                     className="comics__item"
                     key={item.id}
                     >
-                    <img src={item.thumbnail} alt={item.name} />
-                    <div className="comics__item__title">
-                        {item.name}
-                    </div>
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                    <a target="blank" href={item["resourceURL"]}>
+                        <div className="comics__item__title">
+                            {item.name}
+                        </div>
+                    </a>
                     <div className="comics__item__price">
                         {item.price}
                     </div>

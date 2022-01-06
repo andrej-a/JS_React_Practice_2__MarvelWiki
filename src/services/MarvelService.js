@@ -22,6 +22,7 @@ const useMarvelService = () => {
 
     const getAllComicses = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}comics?limit=${_baseLimit}&offset=${offset}&${_apiKey}`);
+        console.log(res);
         return res["data"]["results"].map(_transformComics);
     };
                             //{}
@@ -40,11 +41,11 @@ const useMarvelService = () => {
     const _transformComics = (comics) => {
         return {
             id: comics.id,
-            price: comics.prices[0].price,
-            name: comics.title,
+            price: +comics.prices[0].price === 0 ? "Not available now" : comics.prices[0].price,
+            name: doShortDescription(comics.title, 30),
             thumbnail: (comics.thumbnail.path + `.${comics.thumbnail.extension}`),
             description: (comics.description === "" ? "Sorry, there is not description." : comics.description),
-            resourceURL: comics.resourceURI,
+            resourceURL: comics.urls[0].url,
         };
     };
 
