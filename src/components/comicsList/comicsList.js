@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import {Link} from "react-router-dom";
 import ViewError from '../error/Error';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -53,17 +54,20 @@ const ComicsList = () => {
             return (
                 <li 
                     className="comics__item"
-                    key={item.id}
+                    key={i} //service is missing and returns the comicses with repeat (january 2022)
                     >
-                    <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                    <a target="blank" href={item["resourceURL"]}>
-                        <div className="comics__item__title">
-                            {item.name}
+                        <Link to={`/comics/${item.id}`}>
+                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                        </Link>
+                        
+                        <a target="blank" href={item["resourceURL"]}>
+                            <div className="comics__item__title">
+                                {item.name}
+                            </div>
+                        </a>
+                        <div className="comics__item__price">
+                            {item.price}
                         </div>
-                    </a>
-                    <div className="comics__item__price">
-                        {item.price}
-                    </div>
                 </li>
             )
         })

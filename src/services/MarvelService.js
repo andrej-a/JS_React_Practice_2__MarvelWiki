@@ -22,8 +22,12 @@ const useMarvelService = () => {
 
     const getAllComicses = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}comics?limit=${_baseLimit}&offset=${offset}&${_apiKey}`);
-        console.log(res);
         return res["data"]["results"].map(_transformComics);
+    };
+
+    const getComics = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+        return _transformComics(res["data"]["results"][0], false); //there is {}
     };
                             //{}
     const _transformCharacter = (character) => {
@@ -38,18 +42,29 @@ const useMarvelService = () => {
         };
     };
 
-    const _transformComics = (comics) => {
+    const _transformComics = (comics, doShort = true) => {
         return {
             id: comics.id,
-            price: +comics.prices[0].price === 0 ? "Not available now" : comics.prices[0].price,
-            name: doShortDescription(comics.title, 30),
+            price: +comics.prices[0].price === 0 ? "Not available now" : `${comics.prices[0].price}$`,
+            name: doShort ? doShortDescription(comics.title, 30) : comics.title,
+            pages: `${comics.pageCount} pages`,
             thumbnail: (comics.thumbnail.path + `.${comics.thumbnail.extension}`),
-            description: (comics.description === "" ? "Sorry, there is not description." : comics.description),
+            language: comics.textObjects.languge || "en-us",
+            description: (comics.description === ("" || null) ? "Sorry, there is not description." : comics.description),
             resourceURL: comics.urls[0].url,
         };
     };
 
-    return {loading, newItemsLoading, togglenewItemsLoading, error, clearError, _baseOffset, getAllCharacters, getCharacter, getAllComicses}
+    return {loading, 
+            newItemsLoading, 
+            togglenewItemsLoading, 
+            error, 
+            clearError, 
+            _baseOffset, 
+            getAllCharacters, 
+            getCharacter, 
+            getAllComicses, 
+            getComics}
     
 };//useMarvelService
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import PropTypes from "prop-types";
 import './charInfo.scss';
@@ -92,10 +93,9 @@ const Comics = (props) => {
     }
 
     const comics = obj["comics"].map((item, index) => {
-
         return (
             <li key={index} className="char__comics-item">
-                <a href={item["resourceURI"]}>{item["name"]}</a>
+                <Link to={`comics/${item["resourceURI"].replace(/[\D]/g, '')}`}>{item["name"]}</Link>
             </li>
         )
     })
