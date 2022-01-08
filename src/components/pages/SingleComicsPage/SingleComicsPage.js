@@ -1,5 +1,4 @@
 import { Link, useParams } from 'react-router-dom';
-import { createBrowserHistory  } from 'history';
 import Spinner from '../../spinner/Spinner';
 import ViewError from '../../error/Error';
 import { useState, useEffect } from 'react';

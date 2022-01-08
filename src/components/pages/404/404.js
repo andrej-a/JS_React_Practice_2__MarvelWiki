@@ -1,5 +1,6 @@
 import "../404/404.scss";
 import {Link} from "react-router-dom";
+
 const NotPage = () => {
     return (
         <div className="notpage">
