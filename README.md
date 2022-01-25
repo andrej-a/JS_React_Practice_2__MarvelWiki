@@ -26,9 +26,11 @@ Watch it on [Heroku Marvel API](https://marvel-service-react-project.herokuapp.c
 
 :heavy_check_mark: High Order Components
 
+:heavy_check_mark: React Transition Group
+
 ## What I want to do?
 
-:heavy_multiplication_x: improve HTML
+:heavy_check_mark: improve HTML
 
 :heavy_multiplication_x: add filters
 
