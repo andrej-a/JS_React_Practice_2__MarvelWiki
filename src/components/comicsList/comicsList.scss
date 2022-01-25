@@ -23,7 +23,7 @@
         box-shadow: 5px 5px 10px rgba(0, 0, 0, .25);
         padding: 15px;
         cursor: pointer;
-        transition: 0.3s transform;
+        transition: box-shadow 0.3s transform;
 
         img {
             display: block;
@@ -36,7 +36,8 @@
 
         &__title{
             width: 225px;
-
+            height: 25px;
+            overflow: hidden;
             position: relative;
             padding-top: 10px;
             top: -15px;
@@ -76,3 +77,44 @@
         transform: translateY(-8px);
 }
 }
+
+.items{
+    position: relative;
+    transition: all 1s ease-in-out;
+    left: -600px;
+    visibility: hidden;
+    opacity: 0;
+}
+.items-enter {
+    left: -600px;
+    opacity: 0;
+    visibility: hidden;
+}
+.items-enter-active {
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+    transition: all 1s ease-in-out;
+}
+.items-enter-done {
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+    transition: box-shadow .3s ease-in-out;
+}
+.items-exit {
+    opacity: 1;
+    visibility: visible;
+}
+.items-exit-active {
+    opacity: 0;
+    visibility: hidden;
+}
+.items-exit-done{
+opacity: 0;
+visibility: hidden;
+transition: all 1s ease-in-out;
+}
+
+
+

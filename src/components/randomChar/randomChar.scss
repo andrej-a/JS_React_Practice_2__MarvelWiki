@@ -2,6 +2,7 @@
 
 .random{
     display: flex;
+    flex-direction: row;
     
     &__info{
         width: 550px;
@@ -13,6 +14,52 @@
         background: #FFFFFF;
         box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
         margin-right: 5px;
+
+        transition: visibility opacity 1s ease-in-out;
+        visibility: hidden;
+        opacity: 0;
+    }
+    &__wrapper{
+        height: 250px;
+    }
+
+    &__info-enter {
+        width: 550px;
+        height: 250px;
+        opacity: 0;
+        visibility: hidden;
+    }
+    &__info-enter-active {
+        width: 550px;
+        height: 250px;
+        opacity: 1;
+        visibility: visible;
+        transition: all 1s ease-in-out;
+    }
+    &__info-enter-done {
+        width: 550px;
+        height: 250px;
+        opacity: 1;
+        visibility: visible;
+    }
+    &__info-exit {
+        width: 550px;
+        height: 250px;
+        opacity: 1;
+        visibility: visible;
+    }
+    &__info-exit-active {
+        width: 550px;
+        height: 250px;
+        opacity: 0;
+        visibility: hidden;
+    }
+    &__info-exit-done{
+        width: 550px;
+        height: 250px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 1s ease-in-out;
     }
     
     &__image{
@@ -80,7 +127,7 @@
     }
 
     &__action{
-        width: 550px;
+        flex: 0 0 550px;
         height: 250px;
         position: relative;
 

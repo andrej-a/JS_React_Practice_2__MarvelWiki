@@ -19,7 +19,7 @@ const MainPage = () => {
             <ErrorBoundary errorMessage={"Some problems. We are working for solve it."}>
                 <RandomChar/>
             </ErrorBoundary>
-            <div className="char__content">
+            <div style={{position: "relative"}} className="char__content">
                 <ErrorBoundary errorMessage={"Some problems. We are working for solve it."}>
                     <CharList 
                     onCharSelected={onCharSelected}

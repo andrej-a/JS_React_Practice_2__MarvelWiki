@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import PropTypes from "prop-types";
 import useMarvelService from '../../services/MarvelService';
 import ViewError from '../error/Error';
@@ -10,7 +11,7 @@ import Spinner from '../spinner/Spinner';
 const RandomChar = () => {
     
     const [char, setChar] = useState({});
-   
+    const [show, setShow] = useState(false);
     const {loading, error,clearError, getCharacter} = useMarvelService();
 
     useEffect(() => {
@@ -19,6 +20,7 @@ const RandomChar = () => {
 
     function onCharacterLoaded(char) {
         setChar(char);
+        setShow(true);
     }
 
     function updateCharacter() {
@@ -32,13 +34,19 @@ const RandomChar = () => {
 
         const errorMessage = error ? <ViewError errorMessage={"Sorry, this page is not found. Try it again!"}></ViewError> : null;
         const spinner = loading ? <Spinner></Spinner> : null;
-        const character = !(errorMessage || spinner) ? <ViewInfo char={char}></ViewInfo> : null;
 
         return(
             <div className="random">
-                {errorMessage}
-                {spinner}
-                {character}
+                <div className="random__wrapper">
+                    {errorMessage}
+                    {spinner}
+                    
+                    <ViewInfo 
+                    show={show}
+                    char={char}
+                    >
+                    </ViewInfo>
+                </div>
 
                 <div className="random__action">
                         <div className="random__action__title">
@@ -51,7 +59,10 @@ const RandomChar = () => {
                         <div className="random__action__image">
                             <img src={mjolnir} alt="mjolnir" />
                         </div>
-                        <div className="random__action__btns" onClick={(id) => {updateCharacter(id)}}>
+                        <div className="random__action__btns" onClick={(id) => {
+                            updateCharacter(id)
+                            setShow(false)
+                            }}>
                             <a href="#" className="button button__main">
                                 <div className="inner">try it</div>
                             </a>
@@ -61,12 +72,17 @@ const RandomChar = () => {
         )
 }
 
-const ViewInfo = ({char}) => {
+const ViewInfo = (props) => {
 
-const {name, thumbnail, description, wikiLink, homeLink} = char;
-
+const {name, thumbnail, description, wikiLink, homeLink} = props.char;
+const timeout = 1000;
     return(
-        <div className="random__info">
+        <CSSTransition
+        classNames="random__info"
+        timeout={timeout}
+        in={props.show}
+        >
+            <div className="random__info">
                     <div className="random__image">
                         <img src={thumbnail} alt={thumbnail} />
                     </div>
@@ -92,6 +108,7 @@ const {name, thumbnail, description, wikiLink, homeLink} = char;
                         </div>
                     </div>
                 </div>
+        </CSSTransition>
     )
 }
 

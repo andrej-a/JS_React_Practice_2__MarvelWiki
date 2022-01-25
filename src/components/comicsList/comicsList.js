@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import ViewError from '../error/Error';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
-
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import "./comicsList.scss";
 
 
@@ -13,7 +13,7 @@ const ComicsList = () => {
     const [comicsList, setComicsList] = useState([]);
     const [comicsOffset, togglecomicsOffset] = useState(_baseOffset);
     const [lastComicses, toggleLastComicses] = useState(false);
-
+    const [show, setShow] = useState(false);
     useEffect(() => {
         getMoreComicses(comicsOffset);
     }, []);
@@ -37,24 +37,55 @@ const ComicsList = () => {
     function onNewItemsComicses(newArray) {
         setComicsList(comicsList => [...comicsList, ...newArray]);
         togglecomicsOffset(comicsOffset => comicsOffset + 8);
+        setShow(true);
     }
 
     function onCatchError() {
         togglenewItemsLoading(false);
     }
 
-    function renderItems(arr) {
-        const items = arr.map((item, i) => {
-            let imgStyle = {"objectFit": "cover"};
-            
-            if (item.thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
-                imgStyle = {'objectFit' : 'unset'};
-            }
-    
-            return (
+    const spinner = (!(newItemsLoading) && loading) ? <Spinner></Spinner> : null;
+    const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
+
+    const minLoad = newItemsLoading ? <Spinner></Spinner> : null;
+    const lastCard = lastComicses ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
+    const loadButton = !(error || loading || newItemsLoading || lastComicses) ? <LoadCharButton getMoreComicses={() => getMoreComicses(comicsOffset)}></LoadCharButton> : null;
+
+
+    return(
+        <>
+            <div className="comics">
+                <RenderItems
+                show={show} 
+                arr={comicsList}
+                ></RenderItems>
+            </div>
+            {spinner}
+            {err}
+            {minLoad}
+            {lastCard}
+            {loadButton}
+        </>
+    )
+}
+
+const RenderItems = (props) => {
+    const items = props.arr.map((item, i) => {
+        let imgStyle = {"objectFit": "cover"};
+        
+        if (item.thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
+            imgStyle = {'objectFit' : 'unset'};
+        }
+        const timeout = 1000;
+        return (
+            <CSSTransition
+            timeout={timeout}
+            classNames="items"
+            in={props.show}
+            key={i} //service is missing and returns the comicses with repeat (january 2022)
+            >
                 <li 
-                    className="comics__item"
-                    key={i} //service is missing and returns the comicses with repeat (january 2022)
+                    className="comics__item items"
                     >
                         <Link to={`/comics/${item.id}`}>
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
@@ -69,37 +100,16 @@ const ComicsList = () => {
                             {item.price}
                         </div>
                 </li>
-            )
-        })
-
-        return (
-            <ul className="comics__list">
-                {items}
-            </ul>
+            </CSSTransition>
         )
-    }
+    })
 
-
-    const content = !(error) ? renderItems(comicsList) : null;
-    const spinner = (!(newItemsLoading) && loading) ? <Spinner></Spinner> : null;
-    const err = error ? <ViewError errorMessage={"Catch error! Please, upload this page."}></ViewError> : null;
-
-    const minLoad = newItemsLoading ? <Spinner></Spinner> : null;
-    const lastCard = lastComicses ? <ViewError errorMessage={"Out of cards."}></ViewError> : null;
-    const loadButton = !(error || loading || newItemsLoading || lastComicses) ? <LoadCharButton getMoreComicses={() => getMoreComicses(comicsOffset)}></LoadCharButton> : null;
-
-
-    return(
-        <>
-            <div className="comics">
-                {content}
-            </div>
-            {spinner}
-            {err}
-            {minLoad}
-            {lastCard}
-            {loadButton}
-        </>
+    return (
+        <ul className="comics__list">
+            <TransitionGroup component={null}>
+                {items}
+            </TransitionGroup>
+        </ul>
     )
 }
 
