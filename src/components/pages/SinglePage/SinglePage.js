@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 import Spinner from '../../spinner/Spinner';
 import ViewError from '../../error/Error';
 import { useState, useEffect } from 'react';
@@ -43,13 +44,13 @@ const SinglePage = () => {
     const characterContent = !(loading || error || !character) ? <ContentCard item={character} /> : null;
 
     return (
-        <div className="single-comic">
-            {errorMessage}
-            {spinner}
-            {comicContent}
-            {characterContent}
-            <Link className="single-comic__back" to={"/"}>Back to main</Link>
-        </div>
+            <div className="single-comic">
+                {errorMessage}
+                {spinner}
+                {comicContent}
+                {characterContent}
+                <Link className="single-comic__back" to={"/"}>Back to main</Link>
+            </div>
     )
 }
 
@@ -60,6 +61,14 @@ const ContentCard = (props) => {
     const priceInfo = price ? <div className="single-comic__price">{price}</div> : null;
     return (
         <>
+            <Helmet>
+                    <meta
+                    name={`item ${name}`}
+                    content="item"
+                    />
+                    <title>{name}</title>
+            </Helmet>
+
             <img src={thumbnail} alt="x-men" className="single-comic__img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{name}</h2>
