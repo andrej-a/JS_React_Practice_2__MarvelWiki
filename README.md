@@ -29,6 +29,7 @@ Watch it on [Heroku Marvel API](https://marvel-service-react-project.herokuapp.c
 :heavy_check_mark: React Transition Group
 
 :heavy_check_mark: Formik library
+
 :heavy_check_mark: React Helmet
 
 ## What I want to do?
