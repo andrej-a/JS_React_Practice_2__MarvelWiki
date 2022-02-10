@@ -30,13 +30,19 @@ const useMarvelService = () => {
         const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
         return _transformComics(res["data"]["results"][0], false); //there is {}
     };
+
+    const getCharacterByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+        return res["data"]["results"].length > 0 ? _transformCharacter(res["data"]["results"][0], false) : [];
+    };
                             //{}
-    const _transformCharacter = (character) => {
+    const _transformCharacter = (character, shortDescription = true) => {
         return {
             id: character.id,
-            name: doShortDescription(character.name, 20),
+            name: shortDescription ? doShortDescription(character.name, 20) : character.name,
             thumbnail: (character.thumbnail.path + `.${character.thumbnail.extension}`),
-            description: (character.description === "" ? "Sorry, there is not description." : doShortDescription(character.description, 150)),
+            description: (character.description === "" ? "Sorry, there is not description." : 
+            shortDescription ? doShortDescription(character.description, 150) : character.description),
             homeLink: character.urls[0].url,
             wikiLink: character.urls[1].url,
             comics: doSpliceOfComics(character.comics.items, 10)
@@ -66,6 +72,7 @@ const useMarvelService = () => {
             getCharacter, 
             getAllComicses, 
             getComics,
+            getCharacterByName,
             process,
             onSetProcess}
     

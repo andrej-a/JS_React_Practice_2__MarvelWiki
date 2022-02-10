@@ -1,9 +1,7 @@
-import { Component } from "react";
 
-class Spinner extends Component {
-    render() {
+const Spinner = (props) => {
         return(
-            <svg width="204px" height="204px" display="block" shapeRendering="auto" style={{background: "rgb(255, 255, 255)", margin: "0 auto"}} preserveAspectRatio="xMidYMid" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <svg width={props.width ? props.width : "204px"} height={props.height ? props.height : "204px"} display="block" shapeRendering="auto" style={{background: "rgb(255, 255, 255)", margin: "0 auto"}} preserveAspectRatio="xMidYMid" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <g transform="rotate(0 50 50)">
                 <rect x="49.5" y="28" width="1" height="8" rx="0" ry="0" fill="#9f0013">
                 <animate attributeName="opacity" begin="-1.45748987854251s" dur="1.5384615384615383s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
@@ -102,6 +100,5 @@ class Spinner extends Component {
             </svg>
         )
     }
-}
 
 export default Spinner

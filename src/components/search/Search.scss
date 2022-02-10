@@ -1,0 +1,112 @@
+@import '../../style/variables.scss';
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+@import '../../style/button';
+
+
+.search{
+    width: 425px;
+    height: auto;
+    margin-top: 30px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+    background-color: #fff;
+
+    form{
+        width: inherit;
+        height: auto;
+        
+        label{
+            display: block;
+            font-family: Roboto Condensed;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 21px;
+            padding-top: 25px;
+            padding-left: 25px;
+
+            color: $dark;
+        }
+
+        .wrapper{
+            display: flex;
+            flex-direction: row;
+            align-items: center
+        }
+
+        input{
+            width: 250px;
+            height: 38px;
+            margin-top: 15px;
+            margin-left: 25px;
+            margin-bottom: 25px;
+            outline: 0;
+            border: 0;
+            font-family: Roboto Condensed;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 16px;
+
+            color: rgba(0, 0, 0, 0.5);
+
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+        
+
+    }
+
+    &__button{
+        width: 101px;
+        height: 38px;
+        position: relative;
+        border: 0;
+        margin-left: 24px;
+        cursor: pointer;
+        background-color: $main-color;
+        transition: top .3s ease;
+    }
+
+    &__button:hover {
+        top: -10px;
+    }
+}
+
+.message{
+    width: 425px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    &__button{
+        width: 101px;
+        height: 38px;
+        position: relative;
+        margin-bottom: 25px;
+        color: #fff;
+        background-color: #5C5C5C;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+    &__button:hover{
+        top: -10px;
+    }
+    &__error, &__success{
+        width: 300px;
+        display: block;
+        padding-left: 25px;
+        padding-bottom: 25px;
+    
+        font-family: Roboto Condensed;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 21px;
+        color: $main-color;
+    }
+    &__success{
+        span{
+            color: rgb(11, 211, 44)
+        }
+    }
+}

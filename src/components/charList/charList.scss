@@ -75,6 +75,7 @@
     left: 0;
     opacity: 1;
     visibility: visible;
+    transition: box-shadow 1s, color 1s, ease-in-out;
 }
 .items-exit {
     opacity: 1;
